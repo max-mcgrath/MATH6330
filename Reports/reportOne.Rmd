@@ -16,11 +16,6 @@ source("Code/1_cleanData.R")
 ## Data Summary
 
 ```{r}
-# Create single vector of questions and data frame of observations
-allQuestions <- cbind(catQuestions, textQuestions, multRespQuestions)
-allQuestions <- allQuestions %>% select(colnames(reorderedColumns))
-allData <- cbind(catColumns, textColumns, multRespCols)
-allData <- allData %>% select(colnames(reorderedColumns))
 
 # Loop to go through columns and print relevant data
 for (i in 1:ncol(allData)) {

@@ -1,6 +1,5 @@
 library(readxl)
 library(dplyr)
-library(expss)
 
 # Read in raw data
 rawData <- read_excel("DataRaw/Cannabis Workers and COVID_Master_3Feb22.xlsx")
@@ -21,7 +20,6 @@ reorderedColumns <- fullData %>%
            Q7_TEXT = Q6_8_TEXT,
            Q8 = Q7, 
            Q9 = Q8, 
-           
            Q10 = Q88, 
            Q11 = Q89, 
            Q12 = Q10, 
@@ -33,7 +31,6 @@ reorderedColumns <- fullData %>%
            Q17 = Q14,
            Q18 = Q15, 
            Q19 = Q16,
-           
            Q20 = Q17,
            Q20_TEXT = Q17_5_TEXT,
            Q21 = Q18,
@@ -49,7 +46,6 @@ reorderedColumns <- fullData %>%
            Q28_TEXT = Q26_5_TEXT,
            Q29 = Q86,
            Q29_TEXT = Q86_1_TEXT,
-           
            Q30 = Q28,
            Q31 = Q29,
            Q32 = Q30,
@@ -62,7 +58,6 @@ reorderedColumns <- fullData %>%
            Q38 = Q35,
            Q38_TEXT = Q35_1_TEXT,
            Q39 = Q36,
-
            Q40 = Q37,
            Q41 = Q38,
            Q42 = Q39,
@@ -76,7 +71,6 @@ reorderedColumns <- fullData %>%
            Q48_TEXT = Q45_8_TEXT,
            Q49 = Q46,
            Q49_TEXT = Q46_20_TEXT,
-
            Q50 = Q48,
            Q51 = Q104,
            Q52 = Q49,
@@ -94,7 +88,6 @@ reorderedColumns <- fullData %>%
            Q57 = Q85,
            Q58 = Q84,
            Q59 = Q55,
-
            Q60 = Q113,
            Q61 = Q115,
            Q62 = Q116,
@@ -106,7 +99,6 @@ reorderedColumns <- fullData %>%
            Q68 = Q101,
            Q69 = Q103,
            Q69_TEXT = Q103_5_TEXT,
-
            Q70 = Q107,
            Q71 = Q108,
            Q72 = Q109,
@@ -118,7 +110,6 @@ reorderedColumns <- fullData %>%
            Q77 = Q123,
            Q78 = Q122,
            Q79 = Q124,
-
            Q80 = Q98,
            Q80_TEXT = Q98_1_TEXT,
            Q81 = Q96,
@@ -134,7 +125,6 @@ reorderedColumns <- fullData %>%
            Q87 = Q87,
            Q88 = Q57,
            Q89 = Q106,
-
            Q90 = Q58,
            Q91 = Q59,
            Q92 = Q60,
@@ -145,54 +135,47 @@ reorderedColumns <- fullData %>%
            Q97 = Q65,
            Q98 = Q66,
            Q99 = Q67,
-
            Q100 = Q68,
            Q101 = Q69,
            Q102 = Q70)
 
-# Convert question row to labels
-# labelData <- reorderedColumns[1, ]
-# names(labelData) <- colnames(reorderedColumns)
-# labelData <- as.list(labelData)
-# labelledData <- apply_labels(reorderedColumns, labelData)
-# labelledData <- labelledData[-c(1), ]
-
 # Fix column Q22 (Excel converted to dates)
-fixedQ20Data <- reorderedColumns %>%
+fixedQ22Data <- reorderedColumns %>%
     mutate(Q22 = case_when(.data$Q22 == "44689" ~ "5 to 8",
                            .data$Q22 == "44565" ~ "1 to 4",
                            TRUE ~ .data$Q22))
 
 # Fix NAs (Some observations have NA as "N/A")
-fixedNAData <- fixedQ20Data
-fixedNAData[fixedQ20Data == "N/A"] <- NA
-fixedNAData[fixedQ20Data == "N.a"] <- NA
+fixedNAData <- fixedQ22Data
+fixedNAData[fixedQ22Data == "N/A"] <- NA
+fixedNAData[fixedQ22Data == "N.a"] <- NA
+fixedNAData[fixedQ22Data == "N/a"]
 
 # Store and write cleaned data
 cleanData <- fixedNAData
-write.csv(cleanData, "DataProcessed/cleanData.csv", row.names = FALSE,
-          na = "")
+# write.csv(cleanData, "DataProcessed/cleanData.csv", row.names = FALSE,
+#           na = "")
 
 # Data analysis prep -----------------------------------------------------------
 
 # Remove and store column questions
-questions <- fixedQ20Data[1, ]
-removedQData <- fixedQ20Data[-1, ]
+questions <- cleanData[1, ]
+removedQData <- cleanData[-1, ]
 
 # Select TEXT Columns
-textColumns <- fixedQ20Data %>%
+textColumns <- cleanData %>%
     select(contains("TEXT"))
 textQuestions <- textColumns[1, ]
 textColumns <- textColumns[-1, ]
 
 # Select categorical columns
-catColumns <- fixedQ20Data %>%
+catColumns <- cleanData %>%
     select(!contains("TEXT"), -Q47, -Q48, -Q49, -Q52)
 catQuestions <- catColumns[1, ]
 catColumns <- catColumns[-1, ]
 
 # Break out multiple response questions (Q47, Q48, Q49, Q52)
-multRespCols <- fixedQ20Data %>%
+multRespCols <- cleanData %>%
     select(Q47, Q48, Q49, Q52)
 multRespQuestions <- multRespCols[1, ]
 multRespCols <- multRespCols[-1, ]
@@ -200,3 +183,9 @@ multRespCols <- multRespCols[-1, ]
 # Mutate all categorical columns into factors
 catColumns <- catColumns %>%
     mutate_all(as.factor)
+
+# Create vector of all questions and data frame of  all observations
+allQuestions <- cbind(catQuestions, textQuestions, multRespQuestions)
+allQuestions <- allQuestions %>% select(colnames(reorderedColumns))
+allData <- cbind(catColumns, textColumns, multRespCols)
+allData <- allData %>% select(colnames(reorderedColumns))
