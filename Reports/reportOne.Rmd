@@ -1,0 +1,40 @@
+---
+title: "Untitled"
+author: "Max McGrath"
+date: "2/10/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("..")
+source("Code/1_cleanData.R")
+```
+
+\newpage
+
+## Data Summary
+
+```{r}
+# Create single vector of questions and data frame of observations
+allQuestions <- cbind(catQuestions, textQuestions, multRespQuestions)
+allQuestions <- allQuestions %>% select(colnames(reorderedColumns))
+allData <- cbind(catColumns, textColumns, multRespCols)
+allData <- allData %>% select(colnames(reorderedColumns))
+
+# Loop to go through columns and print relevant data
+for (i in 1:ncol(allData)) {
+    cat(colnames(allData)[i], "-", allQuestions[1, i], "\n\n")
+    if (is.factor(allData[, i])) {
+        print(summary(allData[, i]))
+    } else {
+        for (j in 1:nrow(allData)) {
+            if (!is.na(allData[j, i])) {
+                cat(paste0("\"", allData[j, i], "\""), "\n")
+            }
+        }
+    }
+    cat("\n\n\n")
+}
+```
+

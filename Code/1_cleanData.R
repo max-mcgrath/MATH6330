@@ -157,12 +157,46 @@ reorderedColumns <- fullData %>%
 # labelledData <- apply_labels(reorderedColumns, labelData)
 # labelledData <- labelledData[-c(1), ]
 
-# Fix column Q20 (Excel converted to dates)
+# Fix column Q22 (Excel converted to dates)
 fixedQ20Data <- reorderedColumns %>%
     mutate(Q22 = case_when(.data$Q22 == "44689" ~ "5 to 8",
                            .data$Q22 == "44565" ~ "1 to 4",
                            TRUE ~ .data$Q22))
 
+# Fix NAs (Some observations have NA as "N/A")
+fixedNAData <- fixedQ20Data
+fixedNAData[fixedQ20Data == "N/A"] <- NA
+fixedNAData[fixedQ20Data == "N.a"] <- NA
+
+# Store and write cleaned data
+cleanData <- fixedNAData
+write.csv(cleanData, "DataProcessed/cleanData.csv", row.names = FALSE,
+          na = "")
+
+# Data analysis prep -----------------------------------------------------------
+
 # Remove and store column questions
 questions <- fixedQ20Data[1, ]
 removedQData <- fixedQ20Data[-1, ]
+
+# Select TEXT Columns
+textColumns <- fixedQ20Data %>%
+    select(contains("TEXT"))
+textQuestions <- textColumns[1, ]
+textColumns <- textColumns[-1, ]
+
+# Select categorical columns
+catColumns <- fixedQ20Data %>%
+    select(!contains("TEXT"), -Q47, -Q48, -Q49, -Q52)
+catQuestions <- catColumns[1, ]
+catColumns <- catColumns[-1, ]
+
+# Break out multiple response questions (Q47, Q48, Q49, Q52)
+multRespCols <- fixedQ20Data %>%
+    select(Q47, Q48, Q49, Q52)
+multRespQuestions <- multRespCols[1, ]
+multRespCols <- multRespCols[-1, ]
+
+# Mutate all categorical columns into factors
+catColumns <- catColumns %>%
+    mutate_all(as.factor)
