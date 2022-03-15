@@ -34,7 +34,7 @@ employed in the Colorado cannabis industry in the past 12 months.
 Most relevant to this analysis, respondents were asked whether they support
 unionization within the cannabis industry for three purposes: creation of safer
 workplaces, negotiation of better wages, and negotiation of better benefits.
-Respondent's ability to recognize existing federal labor protections was also
+Further, respondent's ability to recognize existing federal labor protections was also
 assessed, and they were asked whether they have concerns regarding their exposure
 to three types of workplace hazards: biological, chemical, and physical. Lastly,
 they were asked their age, gender, race, and hourly compensation.
@@ -44,8 +44,8 @@ support and knowledge of labor rights and their demographics, wages, and
 concerns over exposure to occupational hazards by testing the following four
 hypotheses:
 
-1. Cannabis workers who express concern over exposure to occupational hazards 
-express support for labor rights.
+1. Cannabis workers who express concern over exposure to occupational hazards are
+more likely to express support for labor rights.
 2. Female cannabis workers are more likely to support workers’ rights than their
 male counterparts.
 3. Non-white cannabis workers are more likely to support workers’ rights than 
@@ -202,9 +202,9 @@ favors more parsimonious models (models with fewer covariates). For this procedu
 an initial model will be chosen, then covariates will be iteratively added to the
 model until AIC is no longer substantially reduced.
 
-\qquad For Hypothesis 4, we will use a similar procedure, but logistic regresesion
+\qquad For Hypothesis 4, we will use a similar procedure, but logistic regression
 will be replaced by linear regression, as we will use the assigned knowledge of
-labor rights score as the outcome. Linear regression models are specified as 
+labor rights score as the continuous outcome. Linear regression models are specified as 
 
 $$
 Y=\beta_0+\beta_1X_1+\cdots+\beta_pX_p+\epsilon
