@@ -1,0 +1,316 @@
+---
+title: "Interim Data Analysis Plan"
+author: |
+    | Analyst: Max McGrath
+    | Investigator: Dr. Marty Otañez
+    | Report generated: `r format(Sys.Date(), '%m/%d/%Y')`
+header-includes:
+    - \usepackage{setspace}\doublespacing
+    - \usepackage{titling}
+    - \usepackage{fixmath}
+    - \usepackage{amsmath}
+output: pdf_document
+indent: false
+mainfont: Times New Roman
+fontsize: 12pt
+geometry: margin=1in
+---
+
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(knitr.kable.NA = '')
+library(kableExtra)
+setwd("..")
+source("Code/4_summaryTables.R")
+```
+
+## Introduction
+
+We received responses to 102 survey questions from
+213 individuals who currently work in the Colorado cannabis industry or who were
+employed in the Colorado cannabis industry in the past 12 months. 
+Most relevant to this analysis, respondents were asked whether they support
+unionization within the cannabis industry for three purposes: creation of safer
+workplaces, negotiation of better wages, and negotiation of better benefits.
+Respondent's ability to recognize existing federal labor protections was also
+assessed, and they were asked whether they have concerns regarding their exposure
+to three types of workplace hazards: biological, chemical, and physical. Lastly,
+they were asked their age, gender, race, and hourly compensation.
+
+\qquad This study aims to investigate the relationships between cannabis employees' 
+support and knowledge of labor rights and their demographics, wages, and
+concerns over exposure to occupational hazards by testing the following four
+hypotheses:
+
+1. Cannabis workers who express concern over exposure to occupational hazards 
+express support for labor rights.
+2. Female cannabis workers are more likely to support workers’ rights than their
+male counterparts.
+3. Non-white cannabis workers are more likely to support workers’ rights than 
+their white counterparts.
+4. Higher paid cannabis employees show more knowledge about workers’ rights than
+lower paid employees.
+
+## Methods
+
+### Data Preparation
+
+First, incomplete observations were removed from the data set. These incomplete
+observations came from the questions about gender and race, as responses
+where individuals chose "prefer not to say" for either question 
+were marked as missing. All other relevant question had no missing 
+responses. Table 1 describes the missingness in the observed data set.
+
+\qquad It is also notable that the question asking survey takers' gender identity
+included a 
+"non-binary/third gender" option. So, for the purposes of this analysis, the gender 
+category was reduced to a binary category in which respondents were classified 
+as those who identify as female and those who do not. Similarly, the question 
+that asked respondents to describe their race
+included seven options, and that data was reduced to a binary
+category classifying respondents as those who describe themselves as a race 
+other than white (non-white) and those who describe themselves as white. Age
+and hourly compensation (wage) are both categorical variables with 6 and 7
+possible responses, respectively. Lists of possible responses is included as a
+part of Tables 2 and 3. 
+
+\qquad Measurements of workers' concerns over occupational hazards stem from 
+their answers to the following three multiple response questions: 
+
+* What __biological__ hazards exist in your cannabis workplace that concern
+you?
+* What __chemical__ hazards exist in your cannabis workplace that concern you?
+* What __physical__ hazards exist in your cannabis workplace that concern you? 
+
+Each of these questions allowed users to select multiple responses from a list
+of relevant types of hazards contained within each category. For the purposes of
+this analysis, each respondent
+was given a binary assignment for each category of hazard which indicates 
+whether they expressed concern for any hazard in that category. A complete
+description of each category of hazard is provided in Table 4. 
+
+\qquad Cannabis workers' support for unionism was measured based on their 
+responses to the three questions:
+
+* Do you believe that cannabis workers need to be part of a labor union
+union to __create safer workplaces__?
+* Do you believe that cannabis workers need to be part of a labor union
+union to __negotiate better wages__?
+* Do you believe that cannabis workers need to be part of a labor union
+union to __negotiate better benefits__?
+
+Each of these questions had two possible responses, "yes" and "no". Each
+question's set of responses will be analyzed separately so that
+differing motivations for support of unionism may be elucidated by this
+analysis. A complete description of respondents' answers to these questions is
+provided in Table 2, with counts stratified by values for each the above
+covariates.
+
+\qquad Lastly, respondents' knowledge of workers rights was assessed
+by their ability to recognize four existing federal protections. The
+individuals surveyed were asked:
+
+* Does federal law protect workers under the worker protection standard 
+from retaliation from bringing forward safety concerns?
+* Does federal law allow cannabis workers to form a labor union?
+* Does federal labor law prohibit cannabis employers from taking any 
+adverse employment action against you for engaging in concerted activity
+regarding wages, benefits and other terms and conditions of 
+employment?
+* Do federal labor laws protect you in engaging in concerted activity even 
+if you are not in a labor union?
+
+Each question had response options of "yes", "no", and "I don't know". The
+respondents were provided an example of concerted activity which says, 
+"complaining about safety, having discussion with co-workers about working 
+conditions."
+Noting that the correct response to each question is "yes", each respondent was
+assigned a score from 0 to 4, with one point being awarded for each correct
+response. Table 3 provides the sample mean (and standard error) for assigned
+scores stratified by each covariate of interest.
+
+### Analysis
+
+To evaluate Hypotheses 1-3, three logistic regression models, one for each type
+of unionism support,
+will undergo model selection. Then, we will use each
+model's final coefficients and their corresponding estimates and
+statistical significance to determine whether the data falsifies or lends 
+evidence to each of the above hypotheses.
+
+\qquad A logistic regression model is specified as
+
+$$
+P(X)=\frac{e^{\beta_0+\beta_1X_1+\beta_2X_2+\cdots+\beta_pX_p}}{1+e^{\beta_0+\beta_1X_1+\beta_2X_2+\cdots+\beta_pX_p}}
+$$
+
+where $P(X)=P(Y=1|X)$ represents the probability that an individual belongs to 
+a certain outcome class given their observed covariate values. In this analysis,
+we will use binary outcomes ("yes" = 1, "no" = 0). 
+The covariates
+in a logistic regression model may be continuous, ordinal, or binary, but we 
+will only
+be using binary and ordinal covariates. The above
+equation is typically rewritten as
+
+$$
+\log(\frac{P(X)}{1-P(X)})=\beta_0+\beta_1X_1+\cdots+\beta_pX_p
+$$
+
+which implies that the relationship between the log-odds of class membership
+and covariate values is a linear relationship. This assumption may be evaluated
+through visual inspection of log-odds plots and through statistical tests like
+the Box-Tidwell test. The model also assumes
+an absence of multicollinearity within the covariates. This may be tested by
+evaluating correlation between covariates and by statistics like the Variance
+Inflation Factor (VIF), and will be corrected by dropping highly correlated 
+predictors from the selection subset (which may impact analysis conclusions).
+This model assumes independence of errors, which may
+be evaluated through visual inspection of log-odds plots. However, if this 
+assumption is not met (within a reasonable degree), a more drastic change to
+model structure will be necessitated to correct for correlation structures within
+the data. Lastly, logistic regression assumes that there are no highly influential 
+outliers or leverage points, but, given the highly constrained covariate
+values innate to survey data, we do not foresee the presence
+of such observations.
+
+\qquad The value for each coefficient and the associated log-odds
+for each response is typically estimated using maximum likelihood methods. 
+The statistical significance for 
+coefficient maximum likelihood estimates is typically evaluated using a Wald 
+test, where the test statistic is defined as
+
+$$
+Z=\frac{\hat{\beta_p}}{s.e.(\hat{\beta_p})}.
+$$
+
+The ability to 
+specify and easily calculate the likelihood enables the opportunity to use 
+information criteria like
+the Akaike information criterion (AIC) and Bayesian information criterion (BIC)
+to compare models with differing subsets of predictors. As such, each model's
+covariates will be selected using forward stepwise selection using BIC as the 
+selection criteria. Forward selection was chosen over other selection methods 
+(backwards, bidirectional) because some covariates have relatively small sample
+sizes for certain classes, so it is preferable to limit the number of covariates
+included in the initial models. For example, from Table 2 we see that only 37
+individuals who do not describe themselves as white participated in the survey.
+Similarly, we will use BIC over AIC to compare between models, as BIC typically
+favors more parsimonious models (models with fewer covariates). For this procedure,
+an initial model will be chosen, then covariates will be iteratively added to the
+model until AIC is no longer substantially reduced.
+
+\qquad For Hypothesis 4, we will use a similar procedure, but logistic regresesion
+will be replaced by linear regression, as we will use the assigned knowledge of
+labor rights score as the outcome. Linear regression models are specified as 
+
+$$
+Y=\beta_0+\beta_1X_1+\cdots+\beta_pX_p+\epsilon
+$$
+
+where $\epsilon$ is distributed $N(0, \sigma^2)$. Here, the assumptions are 
+largely similar to those of logistic regression. We assume a linear relationship
+between covariates and the outcome, which can be evaluated using visual
+inspection of residual plots. Errors are assumed to be independent with constant
+variance, which will be evaluated in the same manner. Multicollinearity is
+expected to be absent from the covariate set, which may be evaluated and corrected
+for in the same manner as logistic regression. And, as with logistic regression,
+the presence of influential outliers and leverage points is not expected to
+be a problem in this instance.Lastly, as with logistic regression, maximum 
+likelihood estimates will be used,
+enabling us to use similar test statistics and information criterion for model
+selection. So, we will procede with the same forward selection using BIC 
+procedure as discussed with logistic regression.
+
+\newpage
+
+## Reproducibility
+
+The code used to generate this analysis is available on GitHub 
+at `<Link to be added when/if repository is made public>`
+. The `Background` folder contains information pertinent to understanding the
+analysis but unnecessary for reproducing it. The `Code` folder contains four
+files: `1_cleanData.R`, `2_cleanMultResp.R`, `3_analysisData.R`, and
+`4_summaryTables.R`.
+These R scripts are dependent upon a data file 
+`DataRaw/Cannabis Workers and COVID_Master_3Feb22.xlsx` 
+which is not available on GitHub, but may be 
+requested by emailing `max` `<dot>` `mcgrath` `<at>` `ucdenver` `<dot>` `edu`. 
+To run the complete analysis, 
+each script should be run in the order of the number prefixing its filename. The
+last directory, `Report`, contains the RMarkdown file `interim.Rmd` which may
+be used to generate this report (noting that it also depends on the aforementioned
+data and scripts).
+
+The complete details of the `R` version, package versions, and
+machine details for the instance which generated this report are provided below.
+
+```{r, echo = FALSE}
+sessionInfo()
+```
+
+
+\newpage
+
+```{r}
+kable(missingnessSummary, booktabs = TRUE,
+      caption = "Missingness Summary", 
+      col.names = c("Variable", "Number Missing"),
+      align = c('l', 'r')) %>%
+    kable_styling(latex_options = c("striped", "scale_down")) %>%
+    row_spec(11, hline_after = TRUE)
+```
+
+```{r}
+kable(outcomeSummary, booktabs = TRUE,
+      caption = "Unionization Support Summary by Covariate",
+      col.names = c("Category", "Yes", "No", "Yes", "No", "Yes", "No")) %>%
+    add_header_above(c(" " = 1, "Safer Workplaces" = 2, "Better Wages" = 2,
+                       "Better Benefits" = 2)) %>%
+    add_header_above(c(" " = 1, "Support of Unionization for..." = 6)) %>%
+    pack_rows("Bio. Hazards", 1, 2) %>%
+    pack_rows("Chem. Hazards", 3, 4) %>%
+    pack_rows("Phys. Hazards", 5, 6) %>%
+    pack_rows("Gender", 7, 8) %>%
+    pack_rows("Race", 9, 10) %>%
+    pack_rows("Wage", 11, 16) %>%
+    pack_rows("Age", 17, 23) %>%
+    kable_styling(latex_options = c("striped", "scale_down"),
+                  font_size = 8) %>%
+    column_spec(c(3, 5), border_left = FALSE, border_right = TRUE)
+```
+
+```{r}
+kable(knowledgeTable, booktabs = TRUE,
+      caption = "Knowledge of Workers' Rights Summary by Covariate",
+      col.names = c("Category", "Average Score", "Standard Error"),
+      digits = 2, align = c("l", "c", "c")) %>%
+    pack_rows("Bio. Hazards", 1, 2) %>%
+    pack_rows("Chem. Hazards", 3, 4) %>%
+    pack_rows("Phys. Hazards", 5, 6) %>%
+    pack_rows("Gender", 7, 8) %>%
+    pack_rows("Race", 9, 10) %>%
+    pack_rows("Wage", 11, 16) %>%
+    pack_rows("Age", 17, 23) %>%
+    kable_styling(latex_options = c("striped"))
+```
+
+
+```{r}
+kable(hazardsTable, booktabs=TRUE, 
+      caption = "Workers' Concerns Over Hazards Summary",
+      digits = 4, col.names = c("Type of Hazard", "Count", "Percent", "Concerns", 
+                                "No Concerns")) %>%
+    kable_styling(latex_options = c("striped", "scale_down"),
+                  font_size = 7) %>% 
+    add_header_above(c("Specific Hazards Summary" = 3, "Category Summary" = 2)) %>%
+    column_spec (4, border_left = TRUE, border_right = FALSE) %>%
+    pack_rows("Biological Hazards", 1, 4) %>%
+    pack_rows("Chemical Hazards", 5, 15) %>%
+    pack_rows("Physical Hazards", 16, 37)
+```
+
+\newpage
+
