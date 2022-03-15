@@ -62,4 +62,3 @@ q52Cols <-  allData %>%
            Q52_G = as.numeric(grepl("None", .data$Q52, fixed = TRUE)),
            .keep = "none")
 
-# Add new question text for additional columns
