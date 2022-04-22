@@ -276,7 +276,7 @@ kable(outcomeSummary, booktabs = TRUE,
     pack_rows("Gender", 7, 8) %>%
     pack_rows("Race", 9, 10) %>%
     pack_rows("Wage", 11, 16) %>%
-    pack_rows("Age", 17, 23) %>%
+    pack_rows("Age", 17, 21) %>%
     kable_styling(latex_options = c("striped", "scale_down"),
                   font_size = 8) %>%
     column_spec(c(3, 5), border_left = FALSE, border_right = TRUE)
@@ -293,7 +293,7 @@ kable(knowledgeTable, booktabs = TRUE,
     pack_rows("Gender", 7, 8) %>%
     pack_rows("Race", 9, 10) %>%
     pack_rows("Wage", 11, 16) %>%
-    pack_rows("Age", 17, 23) %>%
+    pack_rows("Age", 17, 21) %>%
     kable_styling(latex_options = c("striped"))
 ```
 

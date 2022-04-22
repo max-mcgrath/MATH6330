@@ -17,8 +17,11 @@ physHazards <- ifelse(q49Cols$Q49_V == 0, 1, 0)
 # Create female column
 allData <- allData %>%
     mutate(female = case_when(.data$Q4 == "Female" ~ 1,
+                              .data$Q4 == "Non-binary/third gender" ~ 1,
                               .data$Q4_TEXT == 
-                                  "Female is a sex term. Woman/man is gender; I am a female that identifies as a woman." ~ 1,
+                                  paste0("Female is a sex term. Woman/man is g",
+                                         "ender; I am a female that identifies",
+                                         " as a woman.") ~ 1,
                               .data$Q4 == "Prefer not to say" ~ as.numeric(NA),
                               TRUE ~ 0))
 
@@ -28,6 +31,9 @@ allData <- allData %>%
                                 .data$Q5 == "Prefer not to say" ~ 
                                     as.numeric(NA),
                                 TRUE ~ 1))
+
+# Collapse age
+levels(allData$Q3) <- c("21-25", "26-30", "31-35", "36-40", "41+", "41+", "41+")
 
 # Put together to create analysis data
 analysisDataWithMissing <- allData %>%

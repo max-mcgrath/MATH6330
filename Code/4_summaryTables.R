@@ -142,7 +142,7 @@ genderKnowledge <- analysisData %>%
               se = paste0("(", 
                           round(sd(.data$knowledge) / sqrt(n()), 2), 
                           ")")) %>%
-    mutate(variable = ifelse(.data$female == 1, "Female", "Not Female")) %>%
+    mutate(variable = ifelse(.data$female == 1, "Female/Non-binary", "Male")) %>%
     relocate(variable) %>%
     select(-female) %>%
     arrange(variable)
@@ -153,7 +153,7 @@ raceKnowledge <- analysisData %>%
               se = paste0("(", 
                           round(sd(.data$knowledge) / sqrt(n()), 2), 
                           ")")) %>%
-    mutate(variable = ifelse(.data$nonWhite == 1, "Not White", "White")) %>%
+    mutate(variable = ifelse(.data$nonWhite == 1, "Non-White", "White")) %>%
     relocate(variable) %>%
     select(-nonWhite) %>%
     arrange(variable)
