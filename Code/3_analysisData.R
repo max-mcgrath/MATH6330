@@ -32,14 +32,30 @@ allData <- allData %>%
                                     as.numeric(NA),
                                 TRUE ~ 1))
 
-# Collapse age
+# Collapse age and wage
 levels(allData$Q3) <- c("21-25", "26-30", "31-35", "36-40", "41+", "41+", "41+")
+levels(allData$Q18) <- c("$14 or less", "$14 or less", "$15-16", "$17-18", 
+                         "$19 or more", "$19 or more")
+
+# Create knowledge IDK column
+allData <- allData %>%
+    mutate(knowledgeIDK = ifelse(.data$Q91 == "Don't know", 1, 0) +
+               ifelse(.data$Q92 == "Don't know", 1, 0) +
+               ifelse(.data$Q93 == "Don't know", 1, 0) +
+               ifelse(.data$Q87 == "Don't know", 1, 0))
+
+# Create knowledge NO column
+allData <- allData %>%
+    mutate(knowledgeNo = ifelse(.data$Q91 == "No", 1, 0) +
+               ifelse(.data$Q92 == "No", 1, 0) +
+               ifelse(.data$Q93 == "No", 1, 0) +
+               ifelse(.data$Q87 == "No", 1, 0))
 
 # Put together to create analysis data
 analysisDataWithMissing <- allData %>%
     select(age = Q3, female, nonWhite, wage = Q18, unionForSafety = Q94, 
-           unionForWages = Q95, unionForBenefits = Q96, 
-           knowledge = knowledge) %>%
+           unionForWages = Q95, unionForBenefits = Q96,
+           knowledge = knowledge, knowledgeIDK, knowledgeNo) %>%
     mutate(bioHazards = bioHazards,
            chemHazards = chemHazards,
            physHazards = physHazards)

@@ -9,7 +9,7 @@ fullData <- rawData[-c(179, 180), ]
 
 # Reorder / rename columns
 reorderedColumns <- fullData %>%
-    select(Q1 = QID131, 
+    dplyr::select(Q1 = QID131, 
            Q2 = QID129, 
            Q3 = "1", 
            Q4 = "2", 

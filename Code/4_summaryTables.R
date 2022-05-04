@@ -2,6 +2,17 @@ source("Code/2_cleanMultResp.R")
 source("Code/3_analysisData.R")
 library(dplyr) 
 
+# Table One --------------------------------------------------------------------
+tableOne <- analysisData %>%
+    select(bioHazards, chemHazards, physHazards, unionForSafety, unionForWages,
+           unionForBenefits, female, nonWhite, wage, age) %>%
+    summarize(bioHazards = sum(bioHazards)/n(),
+              chemHazards = sum(chemHazards)/n(),
+              physHazards = sum(physHazards)/n(),
+              unionForSafety = sum(unionForSafety == "Yes")/n(),
+              unionForWages = sum(unionForWages == "Yes")/n(),
+              unionForBenefits = sum(unionForBenefits == "Yes")/n())
+
 # Missingness Table ------------------------------------------------------------
 missingnessSummary <- analysisDataWithMissing %>%
     summarize_all(function(x){ sum(is.na(x)) }) %>%
@@ -44,7 +55,7 @@ genderSummary <- analysisData %>%
               wagesNo = sum(.data$unionForWages == "No"),
               benefitsYes = sum(.data$unionForBenefits == "Yes"),
               benefitsNo = sum(.data$unionForBenefits == "No")) %>%
-    mutate(variable = ifelse(.data$female == 1, "Female", "Not Female")) %>%
+    mutate(variable = ifelse(.data$female == 1, "Female/Non-binary", "Male")) %>%
     relocate(variable) %>%
     select(-female) %>%
     arrange(variable)
@@ -239,10 +250,12 @@ q49Categories <- c("Flammable/combustible materials", "Compressed gas",
                    "Workplace violence", "Heat stress", "Other", "None")
 
 q47to49Counts <- cbind(q47Cols, q48Cols, q49Cols) %>%
+    slice(c(-33, -38, -51, -132, -160, -181, -186, -201)) %>%
     summarize(across(everything(), sum)) %>%
     t()
 
 q47to49Percents <- cbind(q47Cols, q48Cols, q49Cols) %>%
+    slice(c(-33, -38, -51, -132, -160, -181, -186, -201)) %>%
     summarize(across(everything(), function (x) { 
         paste0(round(sum(x) / 213, 3) * 100, "%") })) %>%
     t()
@@ -252,10 +265,10 @@ hazardsTable <- cbind(c(q47Categories, q48Categories, q49Categories),
     as.data.frame() %>%
     tibble::rownames_to_column("Question") %>%
     rename("Category" = V1, "Count" = V2, "Percent" = V3)
-hazardsTable$anyNo <- c(sum(q47Cols$Q47_D), rep(NA, ncol(q47Cols) - 1), 
-                        sum(q48Cols$Q48_K), rep(NA, ncol(q48Cols) - 1),
-                        sum(q49Cols$Q49_V), rep(NA, ncol(q49Cols) - 1))
-hazardsTable$anyYes <- 214 - hazardsTable$anyNo
+hazardsTable$anyNo <- c(sum(q47Cols$Q47_D[-c(33, 38, 51, 132, 160, 181, 186, 201)]), rep(NA, ncol(q47Cols) - 1), 
+                        sum(q48Cols$Q48_K[-c(33, 38, 51, 132, 160, 181, 186, 201)]), rep(NA, ncol(q48Cols) - 1),
+                        sum(q49Cols$Q49_V[-c(33, 38, 51, 132, 160, 181, 186, 201)]), rep(NA, ncol(q49Cols) - 1))
+hazardsTable$anyYes <- 205 - hazardsTable$anyNo
 
 hazardsTable <- hazardsTable %>% select(Category, Count, Percent, anyYes, anyNo)
 
