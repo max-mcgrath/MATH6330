@@ -1,0 +1,552 @@
+---
+title: "A Statistical Analysis of Occupational Health Concerns and Workers' Rights in the Cannabis Space"
+author: |
+    | Analyst: Max McGrath
+    | Investigator: Dr. Marty Otañez
+    | MATH 6330 - Workshop in Statistical Consulting
+    | Report generated: `r format(Sys.Date(), '%m/%d/%Y')`
+header-includes:
+    - \usepackage{setspace}\doublespacing
+    - \usepackage{titling}
+    - \usepackage{fixmath}
+    - \usepackage{amsmath}
+output: 
+    pdf_document:
+        number_sections: true
+indent: false
+mainfont: Times New Roman
+fontsize: 12pt
+geometry: margin=1in
+---
+
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(knitr.kable.NA = '')
+library(kableExtra)
+setwd("..")
+source("Code/4_summaryTables.R")
+source("Code/5_modelSupport.R")
+source("Code/6_modelKnowledge.R")
+```
+
+# Introduction
+
+We received responses to 102 survey questions from 213 individuals who currently
+work in the Colorado cannabis industry or who were employed in the Colorado 
+cannabis industry in the past 12 months. Most relevant to this analysis, 
+respondents were asked whether they support unionization within the cannabis 
+industry for three purposes: creation of safer workplaces, negotiation of better
+wages, and negotiation of better benefits. Further, each respondent's ability to
+recognize existing federal labor protections was assessed, and they were asked 
+whether they have concerns regarding their exposure to three types of workplace 
+hazards: biological, chemical, and physical. Lastly, they were asked their age, 
+gender, race, and hourly compensation.
+
+\qquad This study aims to investigate the relationships between cannabis 
+employees' support and knowledge of labor rights and their demographics, wages, 
+and concerns over exposure to occupational hazards by testing the following four
+hypotheses:
+
+1. Cannabis workers who express concern over exposure to occupational hazards are
+more likely to express support for labor rights.
+2. Female cannabis workers are more likely to support workers’ rights than their
+male counterparts.
+3. Non-white cannabis workers are more likely to support workers’ rights than 
+their white counterparts.
+4. Higher paid cannabis employees show more knowledge about workers’ rights than
+lower paid employees.
+
+# Analysis and Results
+
+Of the 205 individuals included in this analysis, approximately
+75.1% support unionization for safer workplaces, 82.0% support unionization for
+better wages, and 82.4% support unionization for better benefits. Further, 56.1%
+expressed concern over some type of biological hazard, 60.0% expressed concern
+for some type of chemical hazard, and 68.8% expressed concern for some type of
+physical hazard present in their workplace. Approximately 58% of respondents
+were female or non-binary and 82% are white. The two most represented wage
+categories are those who make $14 dollars or less per hour with 30.7% of respondents 
+and those whose make $19 or more per hour with 24.9% of respondents. The most
+represented age category is 26 to 30 years old with 36.6% of respondents. A complete summary
+of the number of respondents within each category stratified by support for 
+unionization is provided in Table 1. Each respondent was assigned a knowledge of
+workers' rights scores, with details provided in Section 4.1. The average knowledge
+score was 1.16 correctly answers. Table 2 provides the 
+mean and standard error of knowledge scores stratified by covariate values.
+
+```{r}
+kable(outcomeSummary, booktabs = TRUE,
+      caption = "Unionization Support Summary by Covariate",
+      col.names = c("Category", "Yes", "No", "Yes", "No", "Yes", "No")) %>%
+    add_header_above(c(" " = 1, "Safer Workplaces" = 2, "Better Wages" = 2,
+                       "Better Benefits" = 2)) %>%
+    add_header_above(c(" " = 1, "Support of Unionization for..." = 6)) %>%
+    pack_rows("Bio. Hazards", 1, 2) %>%
+    pack_rows("Chem. Hazards", 3, 4) %>%
+    pack_rows("Phys. Hazards", 5, 6) %>%
+    pack_rows("Gender", 7, 8) %>%
+    pack_rows("Race", 9, 10) %>%
+    pack_rows("Wage", 11, 14) %>%
+    pack_rows("Age", 15, 19) %>%
+    kable_styling(latex_options = c("striped", "scale_down"),
+                  font_size = 8) %>%
+    column_spec(c(3, 5), border_left = FALSE, border_right = TRUE)
+```
+
+
+```{r}
+kable(knowledgeTable, booktabs = TRUE,
+      caption = "Knowledge of Workers' Rights Summary by Covariate",
+      col.names = c("Category", "Average Score", "Standard Error"),
+      digits = 2, align = c("l", "c", "c")) %>%
+    pack_rows("Bio. Hazards", 1, 2) %>%
+    pack_rows("Chem. Hazards", 3, 4) %>%
+    pack_rows("Phys. Hazards", 5, 6) %>%
+    pack_rows("Gender", 7, 8) %>%
+    pack_rows("Race", 9, 10) %>%
+    pack_rows("Wage", 11, 14) %>%
+    pack_rows("Age", 15, 19) %>%
+    kable_styling(latex_options = c("striped"))
+```
+
+
+\qquad To evaluate Hypotheses 1-3, three logistic regression models were fit and 
+refined, with each modeling one of the three types of unionism support. The 
+final coefficient estimates for each model are provided in Table 3. From these 
+results, we see that an individual expressing concern over exposure to physical 
+hazards was positively associated with their odds of supporting unionism for all
+three reasons: safer workplaces, better wages, and better benefits. For example,
+based on the "Safer Workplaces" model, the odds of an individual supporting 
+unionization within the cannabis space for the purpose of creating safer 
+workplaces is 3.82 times greater if they expressed concerned over physical 
+hazards compared with someone who did not (p-value < 0.001). We also see 
+significant evidence that non-white individuals have 8.22 times greater odds, on
+average, of supporting unionization for the purposes of negotiating better wages
+when controlling for concerns over physical and biological hazards 
+(p-value = 0.045). Additionally, there is weaker evidence that non-white 
+individuals also have greater odds of supporting unionization for safer 
+workplaces and better benefits when controlling for concerns over physical
+hazards (p-values 0.064 and 0.076, respectively). Throughout the model selection
+process, gender was not found to be significantly associated with any type of 
+support for unionization in the cannabis industry.
+
+\newpage
+
+\qquad To evaluate Hypothesis 4, a linear regression model was fit and refined
+using assigned knowledge of workers' rights score as the outcome.
+The resulting coefficient estimates are provided in Table 4. From these results,
+we see that individuals who make \$19 or more an hour had, on average, a 0.578 
+higher knowledge of workers' rights score relative to individuals who make 
+$14 or less per hour when controlling for gender, age, and race 
+(p-value = 0.014). We also see that non-white individuals had a 0.748 higher
+score than white individuals (p-value = 0.001), people aged 31 to 35 and 36 to 
+40 score higher than those under 25 (p-values = 0.005 and 0.023, respectively), 
+and individuals who identify as female or non-binary had a 0.677 lower score 
+than those who identify as male when controlling for other covariates 
+(p-value < 0.001). 
+
+```{r}
+kable(unionSupportSummary[, 2:5], booktabs = TRUE,
+      caption = "Support for Unionization Logistic Regressions Coefficient Summary by Model",
+      col.names = c("Outcome/Variable", "Coef. Estimate", "95% CI", "p-value")) %>%
+    kable_styling(latex_options = c("striped", "scale_down"),
+                  font_size = 8) %>%
+    pack_rows("Safer Workplaces", 1, 2) %>%
+    pack_rows("Better Wages", 3, 5) %>%
+    pack_rows("Better Benefits", 6, 7)
+```
+
+```{r}
+kable(knowledgeSummaryData[, 2:5], booktabs = TRUE,
+      caption = "Knowledge of Workers' Rights Linear Regression Coefficient Summary",
+      col.names = c("Variable", "Coef. Estimate", "95% CI", "p-value")) %>%
+    kable_styling(latex_options = c("striped", "scale_down"),
+                  font_size = 8) %>%
+    pack_rows("Gender", 1, 1) %>%
+    pack_rows("Age", 2, 5) %>%
+    pack_rows("Race", 6, 6) %>%
+    pack_rows("Wage", 7, 9)
+```
+
+# Discussion
+
+From the above results, we see evidence supporting Hypothesis 1, as concern over
+exposure to physical hazards was positively associated with all types of 
+unionism support. There is also weaker evidence that concern over biological 
+hazards is associated with support for unionization for the purpose of 
+negotiating better wages when controlling for exposure to physical hazards. 
+
+\qquad It is noteworthy that all three types of workplace hazard concerns were 
+included as potential predictors in each of the three models. So, when the model
+selection process chose concern over physical hazards as the best predictor of
+unionism support, it means only that other types of hazard concerns
+no longer improved the model once concern for physical hazards had been 
+accounted for. Additional exploratory models were fit in which only one type of
+hazard concern was included at a time, and, for each outcome, all three types of
+hazard concerns were retained in the final models with a positive coefficient. 
+As such, there is an indication that each type of workplace hazard concern is 
+positively associated with each type of unionism support.
+
+\qquad It is also notable that the physical hazards category contained the 
+greatest number of unique survey response options of the three types of hazard
+concerns (see Table 5). And while physical hazards had the greatest overall
+number of respondents express concern, the specific sub-categories of hazards in the
+physical category generally saw fewer responses than those in other 
+categories. The sub-categories of hazards in the physical category
+had an average of 36.05 respondents express concern, while those in the chemical
+and biological categories had averages of 43.7 and 64, respectively.
+As such, the quantity of sub-categories of hazards contained within the physical 
+hazards category may be driving its statistical importance over the 
+other two categories. As such, refining the physical category into multiple 
+smaller categories or reducing its scope in future surveys and analyses may yield
+more clear insights into the specific types of hazard concerns that are most
+associated with support on unionization within the cannabis industry. 
+
+```{r}
+kable(hazardsTable, booktabs=TRUE, 
+      caption = "Workers' Concerns Over Hazards Summary",
+      digits = 4, col.names = c("Type of Hazard", "Count", "Percent", "Concerns", 
+                                "No Concerns")) %>%
+    kable_styling(latex_options = c("striped", "scale_down"),
+                  font_size = 7) %>% 
+    add_header_above(c("Specific Hazards Summary" = 3, "Category Summary" = 2)) %>%
+    column_spec (4, border_left = TRUE, border_right = FALSE) %>%
+    pack_rows("Biological Hazards", 1, 4) %>%
+    pack_rows("Chemical Hazards", 5, 15) %>%
+    pack_rows("Physical Hazards", 16, 37)
+```
+
+\qquad The results do not support Hypothesis 2, as there is no indication that gender
+is associated with any type of unionization support. However, these results do
+lend credence to Hypothesis 3. We found significant evidence that non-white 
+individuals are associated with greater odds of supporting unionization to negotiate 
+better wages relative to white individuals when holding physical hazard
+concerns constant. Similarly, we see weaker evidence that non-white individuals
+are associated with greater odds of supporting unionization for the purposes of
+creating safer workplaces and negotiating better wages. Given the relatively low
+sample size for non-white individuals (18.0%), increasing the number of non-white 
+individuals in future surveys may better elucidate the relationship between
+race and unionization support.
+
+\qquad Finally, the results of our final model support Hypothesis 4, as we see that
+individuals who make $19 or more are associated with an increase in the
+number of federal protections they were able to identify relative to those
+who make $14 or less, noting that neither the \$15-16 or \$17-18 groups performed
+significantly better or worse than the \$14 or less group. 
+We also see additional evidence that individuals aged
+31-40 are associated with greater scores relative to those under 25, non-white 
+individuals are associated with higher scores relative to white individuals, and
+males are associated with higher scores relative to those who identify as female
+or non-binary.
+
+\qquad One noteworthy aspect of the analysis of knowledge scores stems from the
+inclusion of the survey answer "Don't know". Given that the average score across
+all subjects was only 1.16 on a scale from 0 to 4, we expect a person guessing 
+would have had an above
+average score. So, if certain groups guessed more than others, it may 
+have skewed analysis results. To briefly investigate this, we looked at the 
+average number of incorrect answers for each group, as we would expect to see
+inflated numbers of incorrect answers if any group had guessed more than
+others rather that truthfully selecting "Don't know". However, in each case, 
+groups which are significantly associated with higher scores in the above 
+results also had  lower average numbers of incorrect scores than the group 
+against which they were compared. For example, non-white individuals had an 
+average of 0.405 incorrect scores while white individuals had an average of 0.5 
+incorrect answers. While this limited analysis suggests that our results
+were not impacted by differential levels of guessing, it may be 
+worthwhile to consider the potential for guesswork impacting future assessments 
+of respondents' knowledge of workers' rights and to update survey questions
+accordingly.
+
+# Methods
+
+## Data Preparation
+
+First, incomplete observations were removed from the data set. These incomplete
+observations came from the questions about gender and race, as responses
+where individuals chose "prefer not to say" for either question 
+were marked as missing. Gender had 4 missing values and Race had 7 missing
+values (with some overlap), so in total 8 observations were removed for a final
+sample size of 205. All other relevant questions had no missing 
+responses. 
+
+\qquad It is also notable that the question asking survey takers' gender identity
+included a 
+"non-binary/third gender" option. So, for the purposes of this analysis, the gender 
+category was reduced to a binary category in which respondents were classified 
+as those who identify as male and those who identify as female, 
+non-binary, or third gender. Similarly, the question 
+that asked respondents to describe their race
+included seven options, and that category was reduced to a binary
+category classifying respondents as those who describe themselves as Asian, 
+Black, Native American, Native Alaskan, Native Hawaiian, or Pacific Islander 
+and those who describe themselves as white. Age
+and hourly compensation (wage) are both categorical variables with 6 and 7
+possible responses, respectively. Lists of possible responses are included as a
+part of Tables 1 and 2, noting that the age category offered several responses
+for ages above 41 that were reduced to a single "41+" category due to
+limited responses in the those categories. Similarly, the wage categories 
+"\$11-12" and "\$13-14" were combined to create "$14 or less", and "\$19-20"
+and "\$21 or more" were combined to create "$19 or more".
+
+\qquad Measurements of workers' concerns over occupational hazards stem from 
+their answers to the following three multiple response questions: 
+
+* What __biological__ hazards exist in your cannabis workplace that concern
+you?
+* What __chemical__ hazards exist in your cannabis workplace that concern you?
+* What __physical__ hazards exist in your cannabis workplace that concern you? 
+
+Each of these questions allowed users to select multiple responses from a list
+of relevant types of hazards contained within each category. For the purposes of
+this analysis, each respondent
+was given a binary assignment for each category of hazard which indicates 
+whether they expressed concern for any hazard in that category. A complete
+description of each category of hazard is provided in Table 5. 
+
+\qquad Cannabis workers' support for unionism was measured based on their 
+responses to the three questions:
+
+* Do you believe that cannabis workers need to be part of a labor union
+union to __create safer workplaces__?
+* Do you believe that cannabis workers need to be part of a labor union
+union to __negotiate better wages__?
+* Do you believe that cannabis workers need to be part of a labor union
+union to __negotiate better benefits__?
+
+Each of these questions had two possible responses, "yes" and "no". Each
+question's set of responses will be analyzed separately so that
+differing motivations for support of unionism may be elucidated by this
+analysis. A complete description of respondents' answers to these questions is
+provided in Table 1, with counts stratified by values for each the above
+covariates.
+
+\qquad Lastly, respondents' knowledge of workers' rights was assessed
+by their ability to recognize four existing federal protections. The
+individuals surveyed were asked:
+
+* Does federal law protect workers under the worker protection standard 
+from retaliation from bringing forward safety concerns?
+* Does federal law allow cannabis workers to form a labor union?
+* Does federal labor law prohibit cannabis employers from taking any 
+adverse employment action against you for engaging in concerted activity
+regarding wages, benefits and other terms and conditions of 
+employment?
+* Do federal labor laws protect you in engaging in concerted activity even 
+if you are not in a labor union?
+
+Each question had response options of "yes", "no", and "I don't know". The
+respondents were provided an example of concerted activity which says, 
+"complaining about safety, having discussion with co-workers about working 
+conditions."
+Noting that the correct response to each question is "yes", each respondent was
+assigned a score from 0 to 4, with one point being awarded for each correct
+response. Table 2 provides the sample mean (and standard error) for assigned
+scores stratified by each covariate of interest.
+
+## Analysis
+
+First, summary statistics for covariates and outcomes were calculated. Then,
+to evaluate Hypotheses 1-3, three logistic regression models, one for each type
+of unionism support, underwent forward stepwise model selection. Then, each 
+model's final coefficients and their
+corresponding estimates and statistical significance were used to determine 
+whether the data falsifies or lends evidence to each of the above hypotheses.
+For Hypothesis 4, we used a similar procedure, but logistic regression
+was replaced by linear regression, as we used respondents' assigned knowledge of
+labor rights score as the continuous outcome. As before, coefficient estimates
+and their associated statistical significance were used to evaluate the 
+hypothesis. An significance threshold of $\alpha$ = 0.05 was used, but, given 
+that this is an exploratory analysis, we refer to results that have an associated
+p-value near 0.05 as "weaker evidence." For more details on logistic and linear 
+regression, see Witten et al. (2013). 
+
+\qquad All pre-processing and analysis was performed using R version 4.1.2 
+and RStudio (R Core Team, 2021). Pre-processing was performed using `dplyr`
+version 1.0.8 (Wickham et al., 2022) and `tidyr` version 1.2.0 
+(Wickham and Girlich, 2022). Modelling was performed using using the base
+package `stats`, and forward selection was performed using `MASS` version 
+7.3.54. Complete details of the instance used to generate this analysis and 
+report are provided in Appendix Section 6.2.
+
+\newpage
+
+# References
+
+| James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). _An introduction to statistical_
+|       _learning_ (1st ed.) [PDF]. Springer.
+
+| R Core Team (2021). _R: A language and environment for statistical computing_. R Foundation 
+|       for Statistical Computing, Vienna, Austria. https://www.R-project.org/.
+
+| Venables WN, Ripley BD (2002). _Modern Applied Statistics with S_, Fourth edition. Springer, 
+|       New York. ISBN 0-387-95457-0, https://www.stats.ox.ac.uk/pub/MASS4/.
+
+| Wickham H, François R, Henry L, Müller K (2022). _dplyr: A Grammar of Data Manipulation._ 
+|        https://dplyr.tidyverse.org, https://github.com/tidyverse/dplyr
+
+| Wickham H, Girlich M (2022). _tidyr: Tidy Messy Data_ https://tidyr.tidyverse.org, 
+|        https://github.com/tidyverse/tidyr.
+
+\newpage
+
+# Appendix
+
+## Methods
+
+First, summary statistics for covariates and outcome were calculated. The majority,
+of these statistics were simple counts or means, but we did calculate the 
+standard error of the mean knowledge score as
+
+$$
+\frac{s}{\sqrt{n}}
+$$
+
+where $s$ is the sample standard deviation of the knowledge score for each group
+and $\sqrt{n}$ is the sample size of each group.
+
+To evaluate Hypotheses 1-3, three logistic regression models, one for each type
+of unionism support as the outcome,
+underwent model selection. All three types of hazard exposure, gender, race, age
+and wage were included as potential predictors for each model. 
+Then, each model's final coefficient estimates and statistical significance was 
+used to determine 
+whether the data disputes or lends evidence to each of the above hypotheses.
+
+\qquad A logistic regression model is specified as
+
+$$
+P(X)=\frac{e^{\beta_0+\beta_1X_1+\beta_2X_2+\cdots+\beta_pX_p}}
+{1+e^{\beta_0+\beta_1X_1+\beta_2X_2+\cdots+\beta_pX_p}}
+$$
+
+where $P(X)=P(Y=1|X)$ represents the probability that an individual belongs to 
+a certain outcome class given their observed covariate values. In this analysis,
+we will use binary outcomes ("yes" = 1, "no" = 0). 
+The covariates
+in a logistic regression model may be continuous, ordinal, or binary, but we 
+will only
+be using binary and ordinal covariates. The above
+equation is typically rewritten as
+
+$$
+\log\left(\frac{P(X)}{1-P(X)}\right)=\beta_0+\beta_1X_1+\cdots+\beta_pX_p
+$$
+
+which implies that the relationship between the log-odds of class membership
+and covariate values is a linear relationship. This assumption was evaluated
+through visual inspection of log-odds plots, noting that it is unlikely this
+assumption would not be met given that only binary variables remained in the
+final models. The model also assumes
+an absence of multicollinearity within the covariates. This was tested by
+looking at the Variance Inflation Factor (VIF). All VIF's were close to one,
+so no change was necessitated.
+This model assumes independence of observations, however this assumption is 
+difficult to test outside of known dependence structures (e.g. time-series or
+spatial dependence). But, in the absence of such structures, as is the case with
+our data, we are not concerned that this assumption is violated. Lastly, logistic 
+regression assumes that there are no highly influential 
+outliers or leverage points, but, given the highly constrained covariate
+values innate to our survey data, this is unlikely to be a problem.
+
+\qquad The value for each coefficient and the associated log-odds
+for each response is typically estimated using maximum likelihood methods. 
+The statistical significance for 
+coefficient maximum likelihood estimates is typically evaluated using a Wald 
+test, where the test statistic is defined as
+
+$$
+Z_p=\frac{\hat{\beta_p}}{s.e.(\hat{\beta_p})}.
+$$
+We then calculate 95% confidence intervals as
+
+$$
+CI=\hat{\beta}_p\pm1.96*s.e.(\hat{\beta}_p).
+$$
+
+The ability to 
+specify and easily calculate the likelihood enables the opportunity to use 
+information criteria like
+the Akaike information criterion (AIC) and Bayesian information criterion (BIC)
+to compare models with differing subsets of predictors. As such, each model's
+covariates were selected using forward stepwise selection using BIC as the 
+selection criteria. Forward selection was chosen over other selection methods 
+(backwards, bidirectional) because some covariates have relatively small sample
+sizes for certain classes, so it is preferable to limit the number of covariates
+included in the initial models. For example, from Table 1 we see that only 37
+individuals who do not describe themselves as white participated in the survey.
+Similarly, we will use BIC over AIC to compare between models, as BIC typically
+favors more parsimonious models (models with fewer covariates). For this procedure,
+an initial model was chosen using the single predictor which reduced the 
+BIC the most over the intercept only model. Then, covariates were iteratively
+added to the model based on which one reduced the BIC the most over the previous
+model until BIC was no longer reduced by including additional predictors. All
+three types of exposure to hazards, gender, race, age, and wage were
+considered as potential predictors in this process.
+
+\qquad For Hypothesis 4, we used a similar procedure, but logistic regression
+was replaced by linear regression, as we used the assigned knowledge of
+labor rights score as the continuous outcome. Linear regression models are specified as 
+
+$$
+Y=\beta_0+\beta_1X_1+\cdots+\beta_pX_p+\epsilon
+$$
+
+where $\epsilon$ is distributed $N(0, \sigma^2)$. Here, the assumptions are 
+largely similar to those of logistic regression. We assume a linear relationship
+between covariates and the outcome, which was evaluated using visual
+inspection of residual and QQ plots. Errors are assumed to be independent with constant
+variance, which was evaluated in the same manner. Multicollinearity is
+expected to be absent from the covariate set, which was evaluated and corrected
+in the same manner as logistic regression. And, as with logistic regression,
+the presence of influential outliers and leverage points is not expected to
+be a problem in this instance. Similarly to logistic regression, inference will
+be conducted using analogous Wald statistics and confidence intervals. 
+Lastly, as with logistic regression, maximum 
+likelihood estimates will be used,
+enabling us to use similar test statistics and information criterion for model
+selection. So, we will proceed with the same forward selection using BIC 
+procedure as discussed with logistic regression. Here, only gender, race, wage,
+and age were considered as potential predictors.
+
+\qquad We will note here that our outcome for the linear model was not truly 
+continuous, taking discrete values from 0 to 4. Further, our predictor set
+was composed entirely of categorical and dichotomous variables. This led to
+"blocky" behavior in the residuals which was cause for some concern. To ensure
+the robustness of our results, we repeated the analysis 5 times, each time
+removing 10 random observations from the data. In each case, the results
+remained consistent, lending credibility to our results despite imperfect 
+residual structure.
+
+\newpage
+
+## Reproducibility
+
+The code used to generate this analysis is available on GitHub 
+at `<Link to be added when repository is made public>`
+. The `Background` folder contains information pertinent to understanding the
+analysis but unnecessary for reproducing it. The `Code` folder contains four
+files: `1_cleanData.R`, `2_cleanMultResp.R`, `3_analysisData.R`,
+`4_summaryTables.R`, `5_modelSupport.R`, `6_modelKnowledge.R`, and 
+`7_additionalAnalysis.R`.
+These R scripts are dependent upon a data file 
+`DataRaw/Cannabis Workers and COVID_Master_3Feb22.xlsx` 
+which is not available on GitHub, but may be 
+requested by emailing `max` `<dot>` `mcgrath` `<at>` `ucdenver` `<dot>` `edu`. 
+To run the complete analysis, 
+each script should be run in the order of the number prefixing its file name. The
+last directory, `Report`, contains the RMarkdown file `report.Rmd` which may
+be used to generate this report (noting that it also depends on the aforementioned
+data and scripts).
+
+The complete details of the `R` version, package versions, and
+machine details for the instance which generated this report are provided below.
+
+```{r, echo = FALSE}
+sessionInfo()
+```
+
+
+
